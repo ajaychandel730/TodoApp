@@ -1,20 +1,26 @@
 "use client";
-import React, { useState } from "react";
+
+import React from "react";
+import TodoTask from "./TodoTask";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
+
 const TodoList = () => {
-  const [task, setTask] = useState<string>("mongo");
+  const todoList = useSelector(
+    (state: RootState) => state.todoReducer.todoList
+  );
+
+  console.log(todoList);
+
   return (
-    <div className="flex items-center space-x-2">
-      <div className="w-[20px] h-[20px] rounded-sm border border-gray-400 "></div>
-      <div className="flex items-center flex-1">
-        <p>{task || ""}</p>
-        {/* <textarea
-          maxLength={50}
-          value={task}
-          className="w-full h-fit border mt-4 border-gray-400 outline-none  flex p-2 items-center overflow-auto resize-none"
-        /> */}
-      </div>
-      <button className="btn">Delete</button>
-      <button className="btn">Edit</button>
+    <div className="flex flex-col w-full bg-red">
+      {todoList.map((todo) => (
+        <TodoTask
+          key={todo.id}
+          task={todo.task}
+          isCompleted={todo.isCompleted}
+        />
+      ))}
     </div>
   );
 };

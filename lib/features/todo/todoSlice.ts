@@ -7,11 +7,11 @@ enum FilterEnums {
   COMPLETED = "COMPLETED",
 }
 
-
 const initialState: TodoApp = {
+  task: "",
   todoList: [],
   filter: {
-    types : [FilterEnums.ALL, FilterEnums.ACTIVE, FilterEnums.COMPLETED],
+    types: [FilterEnums.ALL, FilterEnums.ACTIVE, FilterEnums.COMPLETED],
     active: FilterEnums.ALL,
   },
 };
@@ -20,10 +20,25 @@ const todoSlice = createSlice({
   name: "todo",
   initialState,
   reducers: {
-    addTodo: (state, action: PayloadAction<Todo>) => {
-      state.todoList.push(action.payload);
+    setTask: (state, action: PayloadAction<string>) => {
+      state.task = action.payload;
     },
-    updateTodo: (state, action: PayloadAction<UpdatePayload>) => {
+    addTodo: (state, action: PayloadAction<{ task: string }>) => {
+      if(action.payload.task.length == 0) return state;
+
+      const todo: Todo = {
+        id: nanoid(6),
+        task: action.payload.task,
+        isCompleted: false,
+        createdAt: Date.now(),
+      };
+
+      state.todoList.push(todo);
+    },
+    updateTodo: (
+      state,
+      action: PayloadAction<{ id: string; task: string }>
+    ) => {
       const findIdx = state.todoList.findIndex((task) => {
         task.id == action.payload.id;
       });
@@ -34,7 +49,7 @@ const todoSlice = createSlice({
   },
 });
 
-export const {addTodo, updateTodo} = todoSlice.actions;
+export const { addTodo, updateTodo, setTask } = todoSlice.actions;
 export const todoReducer = todoSlice.reducer;
 
 // types
@@ -44,18 +59,19 @@ type UpdatePayload = {
 };
 
 type Filter = {
-  types : FilterEnums[];
+  types: FilterEnums[];
   active: FilterEnums;
 };
 
 type Todo = {
-  id: number;
+  id: string;
   task: string;
   isCompleted: boolean;
-  createdAt: Date;
+  createdAt: number;
 };
 
 type TodoApp = {
+  task: string;
   todoList: Todo[];
   filter: Filter;
 };
