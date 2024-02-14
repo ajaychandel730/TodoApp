@@ -10,15 +10,16 @@ const TodoList = () => {
     (state: RootState) => state.todoReducer.todoList
   );
 
-  console.log(todoList);
 
   return (
-    <div className="flex flex-col w-full bg-red">
+    <div className="flex flex-col w-full bg-red space-y-4">
       {todoList.map((todo) => (
         <TodoTask
           key={todo.id}
+          id={todo.id}
           task={todo.task}
           isCompleted={todo.isCompleted}
+          editMode={todo.editMode}
         />
       ))}
     </div>

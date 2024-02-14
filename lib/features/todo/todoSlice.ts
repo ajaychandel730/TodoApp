@@ -20,14 +20,15 @@ const todoSlice = createSlice({
   name: "todo",
   initialState,
   reducers: {
-    setTask: (state, action: PayloadAction<string>) => {
-      state.task = action.payload;
+    setTask : (state, action:PayloadAction<string>)=>{
+        state.task = action.payload;
     },
     addTodo: (state, action: PayloadAction<{ task: string }>) => {
-      if(action.payload.task.length == 0) return state;
+      if (action.payload.task.length == 0) return state;
 
       const todo: Todo = {
         id: nanoid(6),
+        editMode: false,
         task: action.payload.task,
         isCompleted: false,
         createdAt: Date.now(),
@@ -35,21 +36,28 @@ const todoSlice = createSlice({
 
       state.todoList.push(todo);
     },
-    updateTodo: (
+    changeEditModeAndUpdateTask: (
       state,
-      action: PayloadAction<{ id: string; task: string }>
+      action: PayloadAction<{ id: string; editMode: boolean, task:string}>
     ) => {
-      const findIdx = state.todoList.findIndex((task) => {
-        task.id == action.payload.id;
-      });
-      if (findIdx != -1) {
-        state.todoList[findIdx].task = action.payload.task;
+      const idx = state.todoList.findIndex(
+        (val) => val.id == action.payload.id
+      );
+      if (idx !== -1) {
+        state.todoList[idx].editMode = action.payload.editMode;
+        state.todoList[idx].task = action.payload.task;
       }
     },
+    isCompletedTodoTask : (state, action:PayloadAction<{id:string, isCompleted:boolean}>)=>{
+       const idx = state.todoList.findIndex((val)=>val.id === action.payload.id);
+       if(idx !== -1){
+         state.todoList[idx].isCompleted = action.payload.isCompleted;
+       }
+    }
   },
 });
 
-export const { addTodo, updateTodo, setTask } = todoSlice.actions;
+export const { addTodo, changeEditModeAndUpdateTask, setTask, isCompletedTodoTask } = todoSlice.actions;
 export const todoReducer = todoSlice.reducer;
 
 // types
@@ -67,6 +75,7 @@ type Todo = {
   id: string;
   task: string;
   isCompleted: boolean;
+  editMode: boolean;
   createdAt: number;
 };
 

@@ -12,6 +12,10 @@
   .btn {
    @apply py-1 px-2  rounded-md border border-gray-300 shadow-md md:hover:bg-black/65 md:hover:text-white
   }
+
+  .task_btn{
+    @apply text-sm
+  }
 }
 
 @media (prefers-color-scheme: dark) {
