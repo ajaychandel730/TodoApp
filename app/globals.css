@@ -8,13 +8,10 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-@layer components{
+@layer components {
   .btn {
-   @apply py-1 px-2  rounded-md border border-gray-300 shadow-md md:hover:bg-black/65 md:hover:text-white
-  }
-
-  .task_btn{
-    @apply text-sm
+    @apply py-1 px-2 text-sm rounded-md border border-gray-300 shadow-md md:hover:bg-black/65
+     md:hover:text-white;
   }
 }
 

@@ -1,9 +1,18 @@
 "use client";
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faPen,
+  faTrash,
+  faCirclePlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
-import { changeEditModeAndUpdateTask, isCompletedTodoTask } from "@/lib/store";
+import {
+  changeEditModeAndUpdateTask,
+  isCompletedTodoTask,
+  removeTask,
+} from "@/lib/store";
 type Task = {
   id: string;
   task: string;
@@ -15,7 +24,7 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
   const dispatch = useDispatch();
   const [textareaValue, setTextAreaValue] = useState<string>(task);
 
-  const editClickHandler = (e: React.MouseEvent<HTMLButtonElement>): void => {
+  const editClickHandler = (e: React.MouseEvent<HTMLDivElement>): void => {
     const taskValue = editMode ? textareaValue : task;
     dispatch(
       changeEditModeAndUpdateTask({ id, editMode: !editMode, task: taskValue })
@@ -31,7 +40,14 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
   const isCompletedClickHandler = (
     e: React.MouseEvent<HTMLDivElement>
   ): void => {
+    if(editMode) return;
     dispatch(isCompletedTodoTask({ id, isCompleted: !isCompleted }));
+  };
+
+  const removeTaskClickHandler = (
+    e: React.MouseEvent<HTMLDivElement>
+  ): void => {
+    dispatch(removeTask({ id }));
   };
 
   return (
@@ -63,12 +79,31 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
           </p>
         )}
       </div>
-      <button className="btn task_btn">Delete</button>
-      {!isCompleted && (
-        <button onClick={editClickHandler} className="btn task_btn">
-          {editMode ? "Save" : "Edit"}
-        </button>
-      )}
+      <div className="flex items-center justify-evenly space-x-4">
+        <div
+          onClick={removeTaskClickHandler}
+          className="flex items-center justify-center"
+        >
+          <button className="btn hidden sm:flex">Delete</button>
+          <FontAwesomeIcon className="sm:hidden text-red-500" icon={faTrash} />
+        </div>
+
+        {!isCompleted && (
+          <div
+            onClick={editClickHandler}
+            className="flex  items-center justify-center"
+          >
+            <button className="btn hidden sm:flex">
+              {editMode ? "Save" : "Edit"}
+            </button>
+            {editMode ? (
+              <FontAwesomeIcon className="sm:hidden text-base" icon={faCirclePlus} />
+            ) : (
+              <FontAwesomeIcon className="sm:hidden" icon={faPen} />
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

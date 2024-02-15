@@ -1,11 +1,7 @@
 import { PayloadAction, createSlice, nanoid } from "@reduxjs/toolkit";
+import { FilterEnums } from "@/lib/enums";
+import { Todo, TodoApp} from "@/lib/types";
 
-// enums
-enum FilterEnums {
-  ALL = "ALL",
-  ACTIVE = "ACTIVE",
-  COMPLETED = "COMPLETED",
-}
 
 const initialState: TodoApp = {
   task: "",
@@ -20,8 +16,8 @@ const todoSlice = createSlice({
   name: "todo",
   initialState,
   reducers: {
-    setTask : (state, action:PayloadAction<string>)=>{
-        state.task = action.payload;
+    setTask: (state, action: PayloadAction<string>) => {
+      state.task = action.payload;
     },
     addTodo: (state, action: PayloadAction<{ task: string }>) => {
       if (action.payload.task.length == 0) return state;
@@ -38,7 +34,7 @@ const todoSlice = createSlice({
     },
     changeEditModeAndUpdateTask: (
       state,
-      action: PayloadAction<{ id: string; editMode: boolean, task:string}>
+      action: PayloadAction<{ id: string; editMode: boolean; task: string }>
     ) => {
       const idx = state.todoList.findIndex(
         (val) => val.id == action.payload.id
@@ -48,39 +44,37 @@ const todoSlice = createSlice({
         state.todoList[idx].task = action.payload.task;
       }
     },
-    isCompletedTodoTask : (state, action:PayloadAction<{id:string, isCompleted:boolean}>)=>{
-       const idx = state.todoList.findIndex((val)=>val.id === action.payload.id);
-       if(idx !== -1){
-         state.todoList[idx].isCompleted = action.payload.isCompleted;
-       }
+    isCompletedTodoTask: (
+      state,
+      action: PayloadAction<{ id: string; isCompleted: boolean }>
+    ) => {
+      const idx = state.todoList.findIndex(
+        (val) => val.id === action.payload.id
+      );
+      if (idx !== -1) {
+        state.todoList[idx].isCompleted = action.payload.isCompleted;
+      }
+    },
+
+    removeTask: (state, action: PayloadAction<{ id: string }>) => {
+      state.todoList = state.todoList.filter(
+        (task) => task.id !== action.payload.id
+      );
+      console.log("removed");
+    },
+    changeTodoActiveFilter : (state, action:PayloadAction<{filter :FilterEnums }>)=>{
+      state.filter.active = action.payload.filter;
     }
   },
 });
 
-export const { addTodo, changeEditModeAndUpdateTask, setTask, isCompletedTodoTask } = todoSlice.actions;
+export const {
+  addTodo,
+  changeEditModeAndUpdateTask,
+  setTask,
+  isCompletedTodoTask,
+  removeTask,
+  changeTodoActiveFilter
+} = todoSlice.actions;
 export const todoReducer = todoSlice.reducer;
 
-// types
-type UpdatePayload = {
-  id: number;
-  task: string;
-};
-
-type Filter = {
-  types: FilterEnums[];
-  active: FilterEnums;
-};
-
-type Todo = {
-  id: string;
-  task: string;
-  isCompleted: boolean;
-  editMode: boolean;
-  createdAt: number;
-};
-
-type TodoApp = {
-  task: string;
-  todoList: Todo[];
-  filter: Filter;
-};

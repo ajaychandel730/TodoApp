@@ -1,24 +1,26 @@
 "use client";
-import { RootState } from "@/lib/store";
+import { FilterEnums } from "@/lib/enums";
+import { RootState, changeTodoActiveFilter } from "@/lib/store";
 import React from "react";
-import {useSelector } from "react-redux";
+import {useDispatch, useSelector } from "react-redux";
 
 const TodoNav = () => {
   const todoFilter = useSelector(
     (state: RootState) => state.todoReducer.filter
   );
+  const dispatch = useDispatch();
 
-  const clickHandler = (e:React.MouseEvent<HTMLDivElement>):void=>{
-       
+  const clickHandler = (type:FilterEnums):void=>{
+      dispatch(changeTodoActiveFilter({filter : type}));
   };
 
   return (
-    <div className="text-base font-medium flex w-full items-center justify-evenly border-b border-gray-500">
+    <div className="text-sm font-medium flex w-full items-center justify-evenly border-b border-gray-500">
       {todoFilter.types.map((type) => (
         <div
           key={type}
-          onClick={clickHandler}
-          className={`border-b text-center w-[20%] ${
+          onClick={():void=>{clickHandler(type)}}
+          className={`border-b cursor-pointer  text-center w-[105px] ${
             todoFilter.active === type
               ? "border-b-black"
               : "border-b-transparent"
