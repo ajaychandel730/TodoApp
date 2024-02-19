@@ -8,6 +8,7 @@ import {
   removeTask,
   changeTodoActiveFilter
 } from "./features/todo/todoSlice";
+
 export const makeStore = () => {
   return configureStore({
     reducer: {

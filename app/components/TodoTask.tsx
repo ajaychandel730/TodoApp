@@ -7,12 +7,12 @@ import {
   faTrash,
   faCirclePlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../lib/hooks";
 import {
   changeEditModeAndUpdateTask,
   isCompletedTodoTask,
   removeTask,
-} from "@/lib/store";
+} from "../../lib/store";
 type Task = {
   id: string;
   task: string;
@@ -21,7 +21,7 @@ type Task = {
 };
 
 const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [textareaValue, setTextAreaValue] = useState<string>(task);
 
   const editClickHandler = (e: React.MouseEvent<HTMLDivElement>): void => {
@@ -40,7 +40,7 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
   const isCompletedClickHandler = (
     e: React.MouseEvent<HTMLDivElement>
   ): void => {
-    if(editMode) return;
+    if (editMode) return;
     dispatch(isCompletedTodoTask({ id, isCompleted: !isCompleted }));
   };
 
@@ -54,7 +54,8 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
     <div className="flex items-center space-x-2">
       <div
         onClick={isCompletedClickHandler}
-        className="w-[24px] h-[24px] flex text-green-600 p-1  items-center justify-center rounded-sm border border-gray-400 "
+        className="w-[26px] h-[26px] rounded-full flex text-green-600 p-1  items-center justify-center 
+         border border-gray-400 "
       >
         {isCompleted && (
           <FontAwesomeIcon className="w-full h-full" icon={faCheck} />
@@ -62,13 +63,22 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
       </div>
       <div className="flex items-center flex-1">
         {editMode ? (
-          <textarea
-            maxLength={50}
-            name="taskText"
-            value={textareaValue}
-            onChange={changeTextAreaHandler}
-            className="w-full h-fit border mt-4 border-gray-400 outline-none  flex p-2 items-center overflow-auto resize-none"
-          />
+          <div
+          className="w-full h-[80px] border rounded-md
+           border-gray-400  flex items-center overflow-auto"
+          >
+            <textarea
+              maxLength={80}
+              name="taskText"
+              value={textareaValue}
+              onChange={changeTextAreaHandler}
+              className="flex flex-[0.9] resize-none h-full p-2 text-sm outline-none "
+            />
+            
+            <div className="flex items-end justify-center px-1 h-full flex-[0.1] text-sm font-normal bg-gray-300">
+                <span>{textareaValue.length}/{80}</span>
+            </div>
+          </div>
         ) : (
           <p
             className={`text-clip overflow-hidden text-wrap ${
@@ -97,7 +107,10 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
               {editMode ? "Save" : "Edit"}
             </button>
             {editMode ? (
-              <FontAwesomeIcon className="sm:hidden text-base" icon={faCirclePlus} />
+              <FontAwesomeIcon
+                className="sm:hidden text-base"
+                icon={faCirclePlus}
+              />
             ) : (
               <FontAwesomeIcon className="sm:hidden" icon={faPen} />
             )}

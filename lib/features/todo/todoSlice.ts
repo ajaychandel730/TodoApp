@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice, nanoid } from "@reduxjs/toolkit";
-import { FilterEnums } from "@/lib/enums";
-import { Todo, TodoApp} from "@/lib/types";
+import { FilterEnums } from "../../enums";
+import { Todo, TodoApp} from "../../types";
 
 
 const initialState: TodoApp = {

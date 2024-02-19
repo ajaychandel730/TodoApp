@@ -1,5 +1,5 @@
-import { Todo } from "@/lib/types";
-import { FilterEnums } from "@/lib/enums";
+import { Todo } from "../lib/types";
+import { FilterEnums } from "../lib/enums";
 
 export default function (todoLIst: Todo[], filter: FilterEnums): Todo[] {
   switch (filter) {

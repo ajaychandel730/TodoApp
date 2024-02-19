@@ -1,12 +1,12 @@
 "use client";
-import { RootState } from "@/lib/store";
-import React, { FormEventHandler } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../lib/store";
+import React from "react";
+import { useAppSelector, useAppDispatch } from "../../lib/hooks";
 import { setTask, addTodo } from "../../lib/store";
 
 const TodoInput = () => {
-  const task = useSelector((state: RootState) => state.todoReducer.task);
-  const dispatch = useDispatch();
+  const task = useAppSelector((state: RootState) => state.todoReducer.task);
+  const dispatch = useAppDispatch();
   
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = e.target;

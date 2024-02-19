@@ -1,14 +1,14 @@
 "use client";
-import { FilterEnums } from "@/lib/enums";
-import { RootState, changeTodoActiveFilter } from "@/lib/store";
+import { FilterEnums } from "../../lib/enums";
+import { RootState, changeTodoActiveFilter } from "../../lib/store";
 import React from "react";
-import {useDispatch, useSelector } from "react-redux";
+import {useAppDispatch, useAppSelector } from "../../lib/hooks";
 
 const TodoNav = () => {
-  const todoFilter = useSelector(
+  const todoFilter = useAppSelector(
     (state: RootState) => state.todoReducer.filter
   );
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const clickHandler = (type:FilterEnums):void=>{
       dispatch(changeTodoActiveFilter({filter : type}));
