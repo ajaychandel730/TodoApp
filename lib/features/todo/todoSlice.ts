@@ -1,7 +1,6 @@
 import { PayloadAction, createSlice, nanoid } from "@reduxjs/toolkit";
 import { FilterEnums } from "../../enums";
-import { Todo, TodoApp} from "../../types";
-
+import { Todo, TodoApp } from "../../types";
 
 const initialState: TodoApp = {
   task: "",
@@ -19,15 +18,15 @@ const todoSlice = createSlice({
     setTask: (state, action: PayloadAction<string>) => {
       state.task = action.payload;
     },
-    addTodo: (state, action: PayloadAction<{ task: string }>) => {
+    setTodoList  : (state, action:PayloadAction<Todo[]>)=>{
+       state.todoList = action.payload; 
+    },
+    addTodo: (state, action: PayloadAction<Todo>) => {
       if (action.payload.task.length == 0) return state;
 
       const todo: Todo = {
-        id: nanoid(6),
+        ...action.payload,
         editMode: false,
-        task: action.payload.task,
-        isCompleted: false,
-        createdAt: Date.now(),
       };
 
       state.todoList.push(todo);
@@ -37,7 +36,7 @@ const todoSlice = createSlice({
       action: PayloadAction<{ id: string; editMode: boolean; task: string }>
     ) => {
       const idx = state.todoList.findIndex(
-        (val) => val.id == action.payload.id
+        (val) => val._id == action.payload.id
       );
       if (idx !== -1) {
         state.todoList[idx].editMode = action.payload.editMode;
@@ -49,7 +48,7 @@ const todoSlice = createSlice({
       action: PayloadAction<{ id: string; isCompleted: boolean }>
     ) => {
       const idx = state.todoList.findIndex(
-        (val) => val.id === action.payload.id
+        (val) => val._id === action.payload.id
       );
       if (idx !== -1) {
         state.todoList[idx].isCompleted = action.payload.isCompleted;
@@ -58,13 +57,16 @@ const todoSlice = createSlice({
 
     removeTask: (state, action: PayloadAction<{ id: string }>) => {
       state.todoList = state.todoList.filter(
-        (task) => task.id !== action.payload.id
+        (task) => task._id !== action.payload.id
       );
       console.log("removed");
     },
-    changeTodoActiveFilter : (state, action:PayloadAction<{filter :FilterEnums }>)=>{
+    changeTodoActiveFilter: (
+      state,
+      action: PayloadAction<{ filter: FilterEnums }>
+    ) => {
       state.filter.active = action.payload.filter;
-    }
+    },
   },
 });
 
@@ -74,7 +76,7 @@ export const {
   setTask,
   isCompletedTodoTask,
   removeTask,
-  changeTodoActiveFilter
+  changeTodoActiveFilter,
+  setTodoList,
 } = todoSlice.actions;
 export const todoReducer = todoSlice.reducer;
-

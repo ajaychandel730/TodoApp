@@ -1,4 +1,7 @@
 import { FilterEnums } from "./enums";
+import {MongoClient} from "mongodb";
+
+type MongoDBClient = MongoClient;
 
 type UpdatePayload = {
   id: number;
@@ -11,11 +14,11 @@ type Filter = {
 };
 
 type Todo = {
-  id: string;
+  _id: string;
   task: string;
   isCompleted: boolean;
-  editMode: boolean;
-  createdAt: number;
+  editMode?: boolean;
+  createdAt: Date;
 };
 
 type TodoApp = {
@@ -24,4 +27,20 @@ type TodoApp = {
   filter: Filter;
 };
 
-export type {UpdatePayload, Filter, Todo, TodoApp}
+/// -------------------------------> fetch api realted type
+type AddTodoFetchResponse = {
+  status : string;
+  data : Todo;
+};
+
+type FetchError = {
+  status : string;
+  message : string;
+};
+
+type GetAllTodoResponse = {
+  status : string,
+  data : Todo[]
+};
+
+export type {UpdatePayload, Filter, Todo, TodoApp, MongoDBClient, GetAllTodoResponse, FetchError, AddTodoFetchResponse};

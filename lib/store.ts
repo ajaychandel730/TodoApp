@@ -6,7 +6,8 @@ import {
   changeEditModeAndUpdateTask,
   isCompletedTodoTask,
   removeTask,
-  changeTodoActiveFilter
+  changeTodoActiveFilter,
+  setTodoList
 } from "./features/todo/todoSlice";
 
 export const makeStore = () => {
@@ -28,5 +29,6 @@ export {
   changeEditModeAndUpdateTask,
   isCompletedTodoTask,
   removeTask,
-  changeTodoActiveFilter
+  changeTodoActiveFilter,
+  setTodoList
 };
