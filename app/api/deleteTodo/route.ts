@@ -8,7 +8,7 @@ export async function DELETE(req:NextRequest) {
     const collection = await getCollection("TodoApp", "Todo");
     const {id}:{id:string} = await req.json();
     const objectId = new ObjectId(id);
-    const deleteTodo = await collection.deleteOne({ _id: objectId });
+    await collection.deleteOne({ _id: objectId });
     return NextResponse.json(
       { status: "ok", message: "Task deleted successfully." },
       { status: 200 }

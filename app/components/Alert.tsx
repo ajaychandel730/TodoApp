@@ -1,8 +1,7 @@
 "use client";
-
 import { useAppDispatch, useAppSelector } from "lib/hooks";
 import { RootState, updateAlert } from "lib/store";
-import React from "react";
+import React, { useRef } from "react";
 
 type Alert = {
   bgColor : string,
@@ -11,10 +10,11 @@ type Alert = {
 };
 
 const Alert = () => {
+  const timoutId = useRef<NodeJS.Timeout>(undefined);
   const alertState = useAppSelector((state: RootState) => state.alertReducer);
   const dispatch = useAppDispatch();
   let alertInfo: Alert;
-
+  
   if (alertState.statusCode >= 200 && alertState.statusCode <= 299) {
     alertInfo = {
       bgColor : "bg-green-400",
@@ -34,9 +34,12 @@ const Alert = () => {
       message: alertState.message,
     };
   }
-  if (!alertState.isAlert) return null;
 
-  setTimeout(() => {
+  if (!alertState.isAlert) return null;
+  
+  clearTimeout(timoutId.current);
+  
+  timoutId.current = setTimeout(() => {
     dispatch(
       updateAlert({
         isAlert: false,
@@ -45,12 +48,12 @@ const Alert = () => {
         statusCode: 0,
       })
     );
-  }, 3000);
+  }, 4000);
 
   return (
     <>
       <div
-        className={`fixed  font-medium top-4 z-50 p-4 mb-4 text-sm rounded-lg ${alertInfo.bgColor}`}
+        className={`fixed slideInDown font-medium top-4 z-50 p-4 mb-4 text-sm rounded-lg ${alertInfo.bgColor}`}
         role="alert"
       >
         <span>{alertInfo.type}</span>{" "}

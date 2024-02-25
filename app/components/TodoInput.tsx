@@ -1,9 +1,10 @@
 "use client";
-import { RootState } from "../../lib/store";
+import { RootState, updateAlert } from "../../lib/store";
 import React from "react";
 import { useAppSelector, useAppDispatch } from "../../lib/hooks";
 import { setTask, addTodo } from "../../lib/store";
 import { AddTodoFetchResponse, FetchError } from "lib/types";
+import { getErrorMessage } from "utils/serverFunctions";
 
 const TodoInput = () => {
   const task = useAppSelector((state: RootState) => state.todoReducer.task);
@@ -29,17 +30,41 @@ const TodoInput = () => {
         body: JSON.stringify({ task }),
       });
 
-      const data:(AddTodoFetchResponse | FetchError)  = await res.json();
-      if("data" in  data ){
-         dispatch(addTodo(data.data));
+      const data: AddTodoFetchResponse | FetchError = await res.json();
+
+      if ("data" in data) {
+        if (data.status == "ok") {
+          dispatch(addTodo(data.data));
+          dispatch(
+            updateAlert({
+              isAlert: true,
+              isProcessing: true,
+              statusCode: res.status,
+              message: "Task Added successfully.",
+            })
+          );
+        }
       } else {
-         throw new Error(data.message);
+        dispatch(
+          updateAlert({
+            isAlert: true,
+            isProcessing: true,
+            message: data.message || "Something went wrong.",
+            statusCode: res.status,
+          })
+        );
       }
-     
     } catch (err: unknown) {
-      if (typeof err == "object" && "message" in err) {
-        console.error("error :", err.message);
-      }
+      const message = getErrorMessage(err);
+      console.error("error :", message);
+      dispatch(
+        updateAlert({
+          isAlert: true,
+          isProcessing: true,
+          message: message || "Something went wrong.",
+          statusCode: 500,
+        })
+      );
     }
   };
 

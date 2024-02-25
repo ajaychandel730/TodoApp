@@ -59,7 +59,6 @@ const todoSlice = createSlice({
       state.todoList = state.todoList.filter(
         (task) => task._id !== action.payload.id
       );
-      console.log("removed");
     },
     changeTodoActiveFilter: (
       state,

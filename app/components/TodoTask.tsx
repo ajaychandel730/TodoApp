@@ -25,12 +25,78 @@ type Task = {
 const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
   const dispatch = useAppDispatch();
   const [textareaValue, setTextAreaValue] = useState<string>(task);
-  const [loading, setLoading] = useState<{delete : boolean}>({delete : false});
-  const editClickHandler = (e: React.MouseEvent<HTMLDivElement>): void => {
-    const taskValue = editMode ? textareaValue : task;
-    dispatch(
-      changeEditModeAndUpdateTask({ id, editMode: !editMode, task: taskValue })
-    );
+  const [loading, setLoading] = useState<{ delete: boolean; update: boolean }>({
+    delete: false,
+    update: false,
+  });
+
+  const editClickHandler = async (
+    e: React.MouseEvent<HTMLDivElement>
+  ): Promise<void> => {
+    try {
+      const taskValue = editMode ? textareaValue : task;
+      if (editMode && taskValue !== task && taskValue.length > 0) {
+        setLoading((val) => ({ ...val, update: true }));
+        const res = await fetch("/api/updateTodo", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ id, taskValue }),
+        });
+
+        const data = await res.json();
+
+        if (data.status == "ok") {
+          dispatch(
+            changeEditModeAndUpdateTask({
+              id,
+              editMode: !editMode,
+              task: taskValue,
+            })
+          );
+          dispatch(
+            updateAlert({
+              isAlert: true,
+              isProcessing: true,
+              statusCode: res.status,
+              message: data.message || "Task is updated successfully.",
+            })
+          );
+        } else {
+          dispatch(
+            updateAlert({
+              isAlert: true,
+              isProcessing: true,
+              statusCode: res.status,
+              message:
+                data.message || "Something went wrong. Please try later.",
+            })
+          );
+        }
+      } else {
+        dispatch(
+          changeEditModeAndUpdateTask({
+            id,
+            editMode: !editMode,
+            task: taskValue,
+          })
+        );
+      }
+    } catch (err) {
+      const message = getErrorMessage(err);
+      dispatch(
+        updateAlert({
+          isAlert: true,
+          isProcessing: true,
+          statusCode: 500,
+          message,
+        })
+      );
+    } finally {
+      setLoading((val) => ({ ...val, update: false }));
+    }
   };
 
   const changeTextAreaHandler = (
@@ -39,18 +105,62 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
     setTextAreaValue(e.target.value);
   };
 
-  const isCompletedClickHandler = (
+  const isCompletedClickHandler = async (
     e: React.MouseEvent<HTMLDivElement>
-  ): void => {
+  ): Promise<void> => {
     if (editMode) return;
-    dispatch(isCompletedTodoTask({ id, isCompleted: !isCompleted }));
+
+    try {
+      setLoading((val) => ({ ...val, update: true }));
+      const res = await fetch("/api/updateTodo", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ id, isCompleted: !isCompleted }),
+      });
+
+      const data = await res.json();
+
+      if (data.status == "ok") {
+        dispatch(isCompletedTodoTask({ id, isCompleted: !isCompleted }));
+        dispatch(
+          updateAlert({
+            isAlert: true,
+            isProcessing: true,
+            statusCode: res.status,
+            message: !isCompleted?  "Task is completed." : "Task active again.",
+          })
+        );
+      } else {
+        dispatch(
+          updateAlert({
+            isAlert: true,
+            isProcessing: true,
+            statusCode: res.status,
+            message: data.message || "Something went wrong. Please try later.",
+          })
+        );
+      }
+    } catch (err) {
+      const message = getErrorMessage(err);
+      dispatch(
+        updateAlert({
+          isAlert: true,
+          isProcessing: true,
+          statusCode: 200,
+          message,
+        })
+      );
+    }
   };
 
   const removeTaskClickHandler = async (
     e: React.MouseEvent<HTMLDivElement>
   ) => {
     try {
-      setLoading((val)=>({...val, delete : true}));
+      setLoading((val) => ({ ...val, delete: true }));
       const res = await fetch("/api/deleteTodo", {
         method: "DELETE",
         body: JSON.stringify({ id }),
@@ -62,13 +172,36 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
       const data = await res.json();
       if (data.status == "ok") {
         dispatch(removeTask({ id }));
+        dispatch(
+          updateAlert({
+            isAlert: true,
+            isProcessing: true,
+            message: "Task is removed.",
+            statusCode: res.status,
+          })
+        );
       } else {
-        throw new Error("error");
+        dispatch(
+          updateAlert({
+            isAlert: true,
+            isProcessing: true,
+            message: "Something went wrong.",
+            statusCode: res.status,
+          })
+        );
       }
     } catch (err) {
-      console.log("error :", getErrorMessage(err));
-    }finally{
-      setLoading((val)=>({...val, delete : false}));
+      const message: string = getErrorMessage(err);
+      dispatch(
+        updateAlert({
+          isAlert: true,
+          isProcessing: true,
+          message,
+          statusCode: 500,
+        })
+      );
+    } finally {
+      setLoading((val) => ({ ...val, delete: false }));
     }
   };
 

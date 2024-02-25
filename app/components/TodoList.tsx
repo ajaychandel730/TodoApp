@@ -45,21 +45,30 @@ const TodoList = () => {
     try {
       setLoading(true);
       const res = await fetch("/api/getAllTodo");
-      const data:(GetAllTodoResponse | FetchError) = await res.json();
+      const data: GetAllTodoResponse | FetchError = await res.json();
       if ("data" in data) {
         if (data.status == "ok") dispatch(setTodoList(data.data));
       } else {
-        throw new Error(data.message);
+        dispatch(
+          updateAlert({
+            isAlert: true,
+            isProcessing: true,
+            message: data.message || "Something went wrong.",
+            statusCode: res.status,
+          })
+        );
       }
     } catch (err: unknown) {
-      console.error(getErrorMessage(err));
+      const message: string = getErrorMessage(err);
+      dispatch(
+        updateAlert({
+          isAlert: true,
+          isProcessing: true,
+          message,
+          statusCode: 500,
+        })
+      );
     } finally {
-      dispatch(updateAlert({
-        isAlert : true,
-        isProcessing : true,
-        message : "Something went wrong.",
-        statusCode : 400
-      }));
       setLoading(false);
     }
   };
