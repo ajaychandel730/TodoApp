@@ -12,7 +12,9 @@ import {
   changeEditModeAndUpdateTask,
   isCompletedTodoTask,
   removeTask,
+  updateAlert,
 } from "../../lib/store";
+import { getErrorMessage } from "utils/serverFunctions";
 type Task = {
   id: string;
   task: string;
@@ -23,7 +25,7 @@ type Task = {
 const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
   const dispatch = useAppDispatch();
   const [textareaValue, setTextAreaValue] = useState<string>(task);
-
+  const [loading, setLoading] = useState<{delete : boolean}>({delete : false});
   const editClickHandler = (e: React.MouseEvent<HTMLDivElement>): void => {
     const taskValue = editMode ? textareaValue : task;
     dispatch(
@@ -44,10 +46,30 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
     dispatch(isCompletedTodoTask({ id, isCompleted: !isCompleted }));
   };
 
-  const removeTaskClickHandler = (
+  const removeTaskClickHandler = async (
     e: React.MouseEvent<HTMLDivElement>
-  ): void => {
-    dispatch(removeTask({ id }));
+  ) => {
+    try {
+      setLoading((val)=>({...val, delete : true}));
+      const res = await fetch("/api/deleteTodo", {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      const data = await res.json();
+      if (data.status == "ok") {
+        dispatch(removeTask({ id }));
+      } else {
+        throw new Error("error");
+      }
+    } catch (err) {
+      console.log("error :", getErrorMessage(err));
+    }finally{
+      setLoading((val)=>({...val, delete : false}));
+    }
   };
 
   return (
@@ -64,7 +86,7 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
       <div className="flex items-center flex-1">
         {editMode ? (
           <div
-          className="w-full h-[80px] border rounded-md
+            className="w-full h-[80px] border rounded-md
            border-gray-400  flex items-center overflow-auto"
           >
             <textarea
@@ -74,9 +96,11 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
               onChange={changeTextAreaHandler}
               className="flex flex-[0.9] resize-none h-full p-2 text-sm outline-none "
             />
-            
+
             <div className="flex items-end justify-center px-1 h-full flex-[0.1] text-sm font-normal bg-gray-300">
-                <span>{textareaValue.length}/{80}</span>
+              <span>
+                {textareaValue.length}/{80}
+              </span>
             </div>
           </div>
         ) : (

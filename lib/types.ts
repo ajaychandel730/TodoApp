@@ -1,5 +1,5 @@
 import { FilterEnums } from "./enums";
-import {MongoClient} from "mongodb";
+import { MongoClient } from "mongodb";
 
 type MongoDBClient = MongoClient;
 
@@ -29,18 +29,36 @@ type TodoApp = {
 
 /// -------------------------------> fetch api realted type
 type AddTodoFetchResponse = {
-  status : string;
-  data : Todo;
+  status: string;
+  data: Todo;
 };
 
 type FetchError = {
-  status : string;
-  message : string;
+  status: string;
+  message: string;
 };
 
 type GetAllTodoResponse = {
-  status : string,
-  data : Todo[]
+  status: string;
+  data: Todo[];
 };
 
-export type {UpdatePayload, Filter, Todo, TodoApp, MongoDBClient, GetAllTodoResponse, FetchError, AddTodoFetchResponse};
+// -------------------> Alert type
+type Alert = {
+  isAlert: boolean;
+  isProcessing: boolean;
+  statusCode: number;
+  message: string;
+};
+
+export type {
+  UpdatePayload,
+  Filter,
+  Todo,
+  TodoApp,
+  MongoDBClient,
+  GetAllTodoResponse,
+  FetchError,
+  AddTodoFetchResponse,
+  Alert
+};

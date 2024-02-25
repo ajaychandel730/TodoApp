@@ -3,7 +3,7 @@ import React from "react";
 import TodoTask from "./TodoTask";
 import { useLayoutEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../lib/hooks";
-import { RootState, setTodoList } from "../../lib/store";
+import { RootState, setTodoList, updateAlert } from "../../lib/store";
 import { Todo } from "../../lib/types";
 import filterTodos from "../../utils/filterTodos";
 import { getErrorMessage } from "utils/serverFunctions";
@@ -45,7 +45,7 @@ const TodoList = () => {
     try {
       setLoading(true);
       const res = await fetch("/api/getAllTodo");
-      const data: GetAllTodoResponse | FetchError = await res.json();
+      const data:(GetAllTodoResponse | FetchError) = await res.json();
       if ("data" in data) {
         if (data.status == "ok") dispatch(setTodoList(data.data));
       } else {
@@ -54,6 +54,12 @@ const TodoList = () => {
     } catch (err: unknown) {
       console.error(getErrorMessage(err));
     } finally {
+      dispatch(updateAlert({
+        isAlert : true,
+        isProcessing : true,
+        message : "Something went wrong.",
+        statusCode : 400
+      }));
       setLoading(false);
     }
   };

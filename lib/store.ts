@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+// todo slice
 import { todoReducer } from "./features/todo/todoSlice";
 import {
   addTodo,
@@ -10,10 +11,15 @@ import {
   setTodoList
 } from "./features/todo/todoSlice";
 
+// alert slice 
+import { updateAlert } from "./features/Alert/alertSlice";
+import { alertReducer } from "./features/Alert/alertSlice";
+
 export const makeStore = () => {
   return configureStore({
     reducer: {
       todoReducer,
+      alertReducer,
     },
   });
 };
@@ -30,5 +36,6 @@ export {
   isCompletedTodoTask,
   removeTask,
   changeTodoActiveFilter,
-  setTodoList
+  setTodoList,
+  updateAlert
 };
