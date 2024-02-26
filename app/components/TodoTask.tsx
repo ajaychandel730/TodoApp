@@ -43,7 +43,7 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          body: JSON.stringify({ id, task : taskValue }),
+          body: JSON.stringify({ id, task: taskValue }),
         });
 
         const data = await res.json();
@@ -199,15 +199,17 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
 
   return (
     <div className="flex items-center space-x-2">
-      <div
-        onClick={isCompletedClickHandler}
-        className="w-[26px] h-[26px] rounded-full flex text-green-600 p-1  items-center justify-center 
+      {!editMode && (
+        <div
+          onClick={isCompletedClickHandler}
+          className="w-[26px] h-[26px] rounded-full flex text-green-600 p-1  items-center justify-center 
          border border-gray-400 "
-      >
-        {isCompleted && (
-          <FontAwesomeIcon className="w-full h-full" icon={faCheck} />
-        )}
-      </div>
+        >
+          {isCompleted && (
+            <FontAwesomeIcon className="w-full h-full" icon={faCheck} />
+          )}
+        </div>
+      )}
       <div className="flex items-center flex-1">
         {editMode ? (
           <div

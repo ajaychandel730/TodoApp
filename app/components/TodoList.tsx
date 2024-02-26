@@ -8,6 +8,7 @@ import { Todo } from "../../lib/types";
 import filterTodos from "../../utils/filterTodos";
 import { getErrorMessage } from "utils/serverFunctions";
 import { FetchError, GetAllTodoResponse } from "../../lib/types";
+import ListSekleton from "./ListSekleton";
 
 const TodoList = () => {
   const { todoList, filter } = useAppSelector(
@@ -79,7 +80,7 @@ const TodoList = () => {
 
   return (
     <div className="flex flex-col w-full bg-red space-y-4">
-      {FilterTodoList(filterList)}
+      {loading? <ListSekleton/> : FilterTodoList(filterList)}
     </div>
   );
 };

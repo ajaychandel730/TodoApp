@@ -71,7 +71,7 @@ const TodoInput = () => {
   return (
     <form
       onSubmit={submitHandler}
-      className="flex items-center w-full space-x-2 px-2"
+      className="flex items-center w-full space-x-2"
     >
       <div className="flex items-center p-2 flex-1 h-[35px]   border border-gray-300 rounded-md">
         <input
@@ -83,7 +83,7 @@ const TodoInput = () => {
           placeholder="Please enter task"
         />
       </div>
-      <button type="submit" className="btn">
+      <button type="submit" className="btn h-full px-4">
         Add
       </button>
     </form>
