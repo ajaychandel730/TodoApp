@@ -202,7 +202,7 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
       {!editMode && (
         <div
           onClick={isCompletedClickHandler}
-          className="w-[26px] h-[26px] rounded-full flex text-green-600 p-1  items-center justify-center 
+          className="w-[26px] h-[26px] rounded-full cursor-pointer flex text-green-600 p-1  items-center justify-center 
          border border-gray-400 "
         >
           {isCompleted && (

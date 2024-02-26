@@ -3,8 +3,8 @@ import React from "react";
 const ListSekleton = () => {
 
     const listItem = (num:number):React.JSX.Element[]=>{
-     return Array(num).fill(0).map((val)=> (
-        <div className="flex w-full h-[60px] space-x-2 items-center justify-between ">
+     return Array(num).fill(0).map((val, idx)=> (
+        <div key={idx+1} className="flex w-full h-[60px] space-x-2 items-center justify-between ">
         <div className="flex h-full items-center">
           <div className="w-3.5 h-3.5 bg-gray-300 rounded-full dark:bg-gray-700"></div>
         </div>
