@@ -43,7 +43,7 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          body: JSON.stringify({ id, taskValue }),
+          body: JSON.stringify({ id, task : taskValue }),
         });
 
         const data = await res.json();
@@ -125,14 +125,6 @@ const TodoTask = ({ id, task, isCompleted, editMode }: Task) => {
 
       if (data.status == "ok") {
         dispatch(isCompletedTodoTask({ id, isCompleted: !isCompleted }));
-        dispatch(
-          updateAlert({
-            isAlert: true,
-            isProcessing: true,
-            statusCode: res.status,
-            message: !isCompleted?  "Task is completed." : "Task active again.",
-          })
-        );
       } else {
         dispatch(
           updateAlert({

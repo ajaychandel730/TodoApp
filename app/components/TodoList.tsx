@@ -44,7 +44,7 @@ const TodoList = () => {
   const getAllTodos = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/getAllTodo");
+      const res = await fetch("/api/getAllTodo", {cache : "no-store"});
       const data: GetAllTodoResponse | FetchError = await res.json();
       if ("data" in data) {
         if (data.status == "ok") dispatch(setTodoList(data.data));

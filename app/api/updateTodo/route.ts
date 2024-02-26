@@ -18,7 +18,7 @@ export async function PUT(req: NextRequest) {
     const body:TodoTask = await req.json(); 
     const updateItems = extractObj<TodoTask>(body, ["task", "isCompleted"]);
     const objectId = new ObjectId(body.id);
-    const insertDoc = await collection.updateOne({_id : objectId}, {$set : {...updateItems}});
+    await collection.updateOne({_id : objectId}, {$set : {...updateItems}});
     return NextResponse.json(
       {
         status: "ok",
